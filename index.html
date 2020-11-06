@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title>Shuffle Poker Deck</title>
+<link href="styles/matchgame.css" rel="stylesheet">
+</head>
+<body>
+
+<script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+
+<section id="game">
+	<div id="form">
+		Seed: <input type="text" id="seed" value=""><br>
+		<input type="button" value="Shuffle"  onclick="clickSubmit()">
+	</div>
+    <div id="cards">
+        <div class="card">
+            <div class="face front"></div>
+        </div>
+    </div>
+</section>
+	
+<script type="text/javascript">
+function getQueryString(name) { 
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+    var r = window.location.search.substr(1).match(reg); 
+    if (r != null) return unescape(r[2]); 
+    return null; 
+}  
+
+const br = Math.pow(2,32)-1;
+var cardWidth = 99;
+var cardHeight = 140;
+function random(){
+    const next = (1103515245*randomseed+123456789)%br;
+    randomseed = next;
+    return next/br;
+}
+
+function randomSort(arr){
+     for (var i = 0, l = arr.length; i < l; i++) {
+        var rc = Math.floor(random()*l)
+        const empty = arr[i];
+        arr[i] = arr[rc];
+        arr[rc] = empty;       
+     }
+     return arr;
+}
+
+$(function(){
+	var $card=$(".card");
+	for(var i = 1;i<52;i++)
+	{
+		$card.clone().appendTo($("#cards"));
+	}
+	var seed = getQueryString('seed');
+	document.getElementById('seed').value = seed;
+	shuffle(seed);
+});
+
+function shuffle(seed) {
+	var deckList = [];
+	for(var pip = 0; pip<13; ++pip){
+        for(var suit = 0; suit<4; ++suit){
+            deckList.push({suit:suit, pip:pip});
+        }
+    }
+    if(seed){
+    	randomseed = seed;
+		randomSort(deckList);
+		randomSort(deckList);
+    }
+		
+	$(".card").each(function(index)
+	{
+		var poker = deckList[index];
+		$(this).css({
+			"left":(cardWidth+20)*(index%7)+"px",
+			"top":(cardHeight+20)*Math.floor(index/7)+"px"
+		});
+		var x = -cardWidth*poker.pip+"px";
+		var y = -cardHeight*poker.suit+"px";
+		$(this).find(".front").css("background-position",x+" "+y);
+	});
+}
+
+function clickSubmit() {
+	shuffle(parseInt(document.getElementById('seed').value))
+}
+
+</script>
+</body>
+</html>
