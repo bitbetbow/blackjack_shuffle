@@ -9,12 +9,9 @@
 <body>
 
 <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
-
+<script type="text/javascript" src="scripts/sha256.js"></script>
 <section id="game">
-	<div id="form">
-		Seed: <input type="text" id="seed" value=""><br>
-		<input type="button" value="Shuffle"  onclick="clickSubmit()">
-	</div>
+	<div id="seed"></div>
     <div id="cards">
         <div class="card">
             <div class="face front"></div>
@@ -31,8 +28,8 @@ function getQueryString(name) {
 }  
 
 const br = Math.pow(2,32)-1;
-var cardWidth = 99;
-var cardHeight = 140;
+var cardWidth = 39.6;
+var cardHeight = 56;
 function random(){
     const next = (1103515245*randomseed+123456789)%br;
     randomseed = next;
@@ -50,15 +47,34 @@ function randomSort(arr){
 }
 
 $(function(){
+	var txid = getQueryString('txid');
+	var hash = getQueryString('hash');
+	var str = sha256_digest(txid+hash);
+	var seed = '';
+	for(var i=0;i<str.length;i++){
+        if(isCharNumber(str.charCodeAt(i))===true && seed.length<8){
+            seed+=str[i]
+        }
+    }
+
+	$("#seed").html("<h1>sha256("+txid+hash+")="+str+"</h1><h1>the first 8 digit is "+seed+"</h1>");
+
 	var $card=$(".card");
 	for(var i = 1;i<52;i++)
 	{
 		$card.clone().appendTo($("#cards"));
 	}
-	var seed = getQueryString('seed');
-	document.getElementById('seed').value = seed;
 	shuffle(seed);
 });
+
+function isCharNumber(iN) {  
+    if (iN >= 48 && iN <= 57){
+    	return true;
+    }else{
+    	return false;
+    }
+} 
+
 
 function shuffle(seed) {
 	var deckList = [];
@@ -77,8 +93,8 @@ function shuffle(seed) {
 	{
 		var poker = deckList[index];
 		$(this).css({
-			"left":(cardWidth+20)*(index%7)+"px",
-			"top":(cardHeight+20)*Math.floor(index/7)+"px"
+			"left":(cardWidth+10)*(index%7)+"px",
+			"top":(cardHeight+10)*Math.floor(index/7)+"px"
 		});
 		var x = -cardWidth*poker.pip+"px";
 		var y = -cardHeight*poker.suit+"px";
