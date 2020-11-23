@@ -50,14 +50,9 @@ $(function(){
 	var txid = getQueryString('txid');
 	var hash = getQueryString('hash');
 	var str = sha256_digest(txid+hash);
-	var seed = '';
-	for(var i=0;i<str.length;i++){
-        if(isCharNumber(str.charCodeAt(i))===true && seed.length<8){
-            seed+=str[i]
-        }
-    }
+	var seed = parseInt(str.slice(0,8),16);;
 
-	$("#seed").html("<h1>sha256("+txid+hash+")="+str+"</h1><h1>the first 8 digit is "+seed+"</h1>");
+	$("#seed").html("<h1>sha256("+txid+hash+")="+str+"</h1><h1>the seed is "+seed+"</h1>");
 
 	var $card=$(".card");
 	for(var i = 1;i<52;i++)
@@ -67,13 +62,7 @@ $(function(){
 	shuffle(seed);
 });
 
-function isCharNumber(iN) {  
-    if (iN >= 48 && iN <= 57){
-    	return true;
-    }else{
-    	return false;
-    }
-} 
+
 
 
 function shuffle(seed) {
