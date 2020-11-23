@@ -50,7 +50,7 @@ $(function(){
 	var txid = getQueryString('txid');
 	var hash = getQueryString('hash');
 	var str = sha256_digest(txid+hash);
-	var seed = parseInt(str.slice(0,8),16);;
+	var seed = str.slice(0,8);
 
 	$("#seed").html("<h1>sha256("+txid+hash+")="+str+"</h1><h1>the seed is "+seed+"</h1>");
 
@@ -59,7 +59,7 @@ $(function(){
 	{
 		$card.clone().appendTo($("#cards"));
 	}
-	shuffle(seed);
+	shuffle(parseInt(seed,16));
 });
 
 
